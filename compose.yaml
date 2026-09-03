@@ -1,0 +1,11 @@
+services:
+  limnoria:
+    image: ghcr.io/ploos-as/limnoria:0.1.0
+    container_name: limnoria
+    restart: unless-stopped
+    volumes:
+      - ./data:/data
+    # environment:
+    #   LIMNORIA_CONFIG: MyBot.conf
+    # ports:
+    #   - "8080:8080" # Only if Limnoria's HTTP server is enabled intentionally.
