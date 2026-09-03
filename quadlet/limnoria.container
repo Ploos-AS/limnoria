@@ -1,0 +1,18 @@
+[Unit]
+Description=Limnoria IRC bot
+After=network-online.target
+Wants=network-online.target
+
+[Container]
+Image=ghcr.io/ploos-as/limnoria:0.1.0
+ContainerName=limnoria
+Volume=%h/.local/share/limnoria:/data:Z
+# Environment=LIMNORIA_CONFIG=MyBot.conf
+# PublishPort=8080:8080
+
+[Service]
+Restart=on-failure
+TimeoutStopSec=30
+
+[Install]
+WantedBy=default.target
