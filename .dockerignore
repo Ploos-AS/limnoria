@@ -1,0 +1,9 @@
+.git
+.github
+.gitignore
+data
+docs
+quadlet
+tests
+scripts
+README.md
