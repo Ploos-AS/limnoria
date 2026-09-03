@@ -1,0 +1,12 @@
+#!/bin/sh
+set -eu
+
+for proc in /proc/[0-9]*/cmdline; do
+  [ -r "$proc" ] || continue
+  cmd="$(tr '\000' ' ' < "$proc" 2>/dev/null || true)"
+  case "$cmd" in
+    *supybot*) exit 0 ;;
+  esac
+done
+
+exit 1
