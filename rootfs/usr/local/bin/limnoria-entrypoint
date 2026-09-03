@@ -1,0 +1,65 @@
+#!/bin/sh
+set -eu
+
+idle_unconfigured() {
+  printf '%s\n' "Limnoria is not configured yet." >&2
+  printf '%s\n' "Run the setup wizard with:" >&2
+  printf '%s\n' "  docker compose run --rm limnoria wizard" >&2
+  printf '%s\n' "or:" >&2
+  printf '%s\n' "  podman run --rm -it -v ./data:/data:Z ghcr.io/ploos-as/limnoria:0.1.0 wizard" >&2
+  printf '%s\n' "After the wizard creates a .conf file in /data, restart the container." >&2
+  exec tail -f /dev/null
+}
+
+resolve_config() {
+  if [ -n "${LIMNORIA_CONFIG:-}" ]; then
+    case "$LIMNORIA_CONFIG" in
+      /*) printf '%s\n' "$LIMNORIA_CONFIG" ;;
+      *)  printf '/data/%s\n' "$LIMNORIA_CONFIG" ;;
+    esac
+    return
+  fi
+
+  set -- /data/*.conf
+  if [ ! -e "$1" ]; then
+    return 1
+  fi
+  if [ "$#" -ne 1 ]; then
+    printf '%s\n' "Multiple Limnoria .conf files exist in /data." >&2
+    printf '%s\n' "Set LIMNORIA_CONFIG to select one explicitly." >&2
+    for config in "$@"; do printf '  %s\n' "$config" >&2; done
+    return 2
+  fi
+  printf '%s\n' "$1"
+}
+
+case "${1:-run}" in
+  run)
+    shift || true
+    if config="$(resolve_config)"; then
+      if [ ! -f "$config" ]; then
+        printf 'Configured file does not exist: %s\n' "$config" >&2
+        exit 64
+      fi
+      exec supybot "$config" "$@"
+    else
+      rc=$?
+      if [ "$rc" -eq 1 ] || [ "$rc" -eq 2 ]; then
+        idle_unconfigured
+      fi
+      exit "$rc"
+    fi
+    ;;
+  wizard)
+    shift || true
+    cd /data
+    exec supybot-wizard "$@"
+    ;;
+  shell)
+    shift || true
+    exec /bin/sh "$@"
+    ;;
+  *)
+    exec "$@"
+    ;;
+esac
