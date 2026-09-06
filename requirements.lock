@@ -1,0 +1,22 @@
+# Dependency lock for the Limnoria container.
+#
+# Baseline: packages installed by the successful v0.1.0 CI build on
+# 2026-09-03 for ProgVal/Limnoria@ac135083987a3a3121a9ba54f980902b29da10c7.
+#
+# This file pins the complete runtime dependency graph to exact versions.
+# Install it with --no-deps so new transitive dependencies cannot enter the
+# image implicitly. Hash pinning is a separate hardening step.
+
+cffi==2.1.1
+chardet==6.0.0.post1
+cryptography==50.0.1
+dateandtime==0.0.7
+ddate==0.1.2
+feedparser==6.0.14
+feedparser-sgmllib==2.1.0
+pycparser==3.0
+PySocks==1.7.1
+python-dateutil==2.9.0.post0
+python-gnupg==0.5.6
+pyxmpp2-scram==2.0.2
+six==1.17.0
