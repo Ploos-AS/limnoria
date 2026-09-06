@@ -5,12 +5,22 @@ image="${1:-ghcr.io/ploos-as/limnoria:edge}"
 
 echo "qualifying published image: $image"
 
-raw="$(docker buildx imagetools inspect --raw "$image")"
-printf '%s' "$raw" | grep -q '"architecture":"amd64"' || {
+platforms="$(docker buildx imagetools inspect "$image" --format '{{json .Manifest}}' | python3 -c '
+import json, sys
+manifest = json.load(sys.stdin)
+for item in manifest.get("manifests", []):
+    platform = item.get("platform", {})
+    os_name = platform.get("os")
+    arch = platform.get("architecture")
+    if os_name and arch:
+        print(f"{os_name}/{arch}")
+')"
+
+printf '%s\n' "$platforms" | grep -qx 'linux/amd64' || {
   echo 'published image is missing linux/amd64' >&2
   exit 1
 }
-printf '%s' "$raw" | grep -q '"architecture":"arm64"' || {
+printf '%s\n' "$platforms" | grep -qx 'linux/arm64' || {
   echo 'published image is missing linux/arm64' >&2
   exit 1
 }
