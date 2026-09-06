@@ -22,8 +22,15 @@ grep -q '^0\.1\.0$' VERSION
 grep -q 'ghcr.io/ploos-as/limnoria:0.1.0' docs/releases/v0.1.0.md
 grep -q 'gh release create' .github/workflows/container.yml
 
-# Every active requirement in the lock must be an exact version pin.
-if grep -Ev '^[[:space:]]*(#|$|[A-Za-z0-9_.-]+==[^[:space:]]+)$' requirements.lock >/dev/null; then
+# Every active requirement in the lock must be an exact package==version pin.
+# Ignore blank lines and full-line comments before validating requirements.
+if awk '
+  /^[[:space:]]*($|#)/ { next }
+  $0 !~ /^[A-Za-z0-9_.-]+==[^[:space:]]+$/ { bad = 1; print "invalid lock line: " $0 > "/dev/stderr" }
+  END { exit bad ? 1 : 0 }
+' requirements.lock; then
+  :
+else
   echo 'requirements.lock contains a non-exact dependency' >&2
   exit 1
 fi
