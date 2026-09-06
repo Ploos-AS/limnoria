@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-required='Dockerfile README.md VERSION requirements.lock compose.yaml quadlet/limnoria.container rootfs/usr/local/bin/limnoria-entrypoint rootfs/usr/local/bin/limnoria-healthcheck scripts/qualify-published-image.sh docs/releases/v0.1.0.md'
+required='Dockerfile README.md VERSION requirements.lock compose.yaml quadlet/limnoria.container rootfs/usr/local/bin/limnoria-entrypoint rootfs/usr/local/bin/limnoria-healthcheck scripts/qualify-published-image.sh scripts/irc-integration-test.sh tests/irc_stub.py docs/releases/v0.1.0.md'
 for path in $required; do
   [ -f "$path" ] || { echo "missing: $path" >&2; exit 1; }
 done
@@ -22,8 +22,12 @@ grep -q '^0\.1\.0$' VERSION
 grep -q 'ghcr.io/ploos-as/limnoria:0.1.0' docs/releases/v0.1.0.md
 grep -q 'gh release create' .github/workflows/container.yml
 grep -q 'qualify-published-image.sh' .github/workflows/container.yml
+grep -q 'irc-integration-test.sh' .github/workflows/container.yml
 grep -q 'linux/amd64' scripts/qualify-published-image.sh
 grep -q 'linux/arm64' scripts/qualify-published-image.sh
+grep -q '^REGISTERED$' tests/irc_stub.py
+grep -q 'JOINED #ci' tests/irc_stub.py
+grep -q 'PONG_OK' tests/irc_stub.py
 
 # Every active requirement in the lock must be an exact package==version pin.
 # Ignore blank lines and full-line comments before validating requirements.
