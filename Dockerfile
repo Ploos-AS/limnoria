@@ -12,11 +12,14 @@ ENV VIRTUAL_ENV=/opt/limnoria/venv \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
     PIP_NO_CACHE_DIR=1
 
+COPY requirements.lock /tmp/requirements.lock
+
 RUN python -m venv "$VIRTUAL_ENV" \
-    && pip install --upgrade pip setuptools wheel \
-    && pip install -r "https://raw.githubusercontent.com/ProgVal/Limnoria/${LIMNORIA_REF}/requirements.txt" \
+    && pip install --upgrade 'pip==26.2.1' 'setuptools==84.0.0' 'wheel==0.48.0' 'packaging==26.3' \
+    && pip install --no-deps -r /tmp/requirements.lock \
     && SOURCE_DATE_EPOCH="${LIMNORIA_SOURCE_DATE_EPOCH}" \
-       pip install "https://github.com/ProgVal/Limnoria/archive/${LIMNORIA_REF}.tar.gz" \
+       pip install --no-deps --no-build-isolation "https://github.com/ProgVal/Limnoria/archive/${LIMNORIA_REF}.tar.gz" \
+    && pip check \
     && supybot --version
 
 FROM python:${PYTHON_VERSION}-slim-bookworm
