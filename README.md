@@ -15,6 +15,7 @@ Image: `ghcr.io/ploos-as/limnoria`
 - first-run behavior that stays up and prints setup instructions instead of crash-looping
 - optional Limnoria HTTP server port `8080` is exposed by the image but never published automatically
 - upstream source pinned to an immutable Git commit
+- runtime Python dependency graph pinned to exact versions in `requirements.lock`
 - GitHub Actions publishing with SBOM and provenance attestations
 - Compose and rootless Podman Quadlet examples
 
@@ -171,7 +172,7 @@ ports:
 
 No inbound port is required for normal IRC operation; Limnoria connects outbound to IRC servers.
 
-## Upstream pin
+## Upstream pin and dependency lock
 
 Container `0.1.0` pins Limnoria source to:
 
@@ -181,7 +182,9 @@ ProgVal/Limnoria@ac135083987a3a3121a9ba54f980902b29da10c7
 
 That upstream commit is dated 2026-08-31. Python 3.13 is used by default; upstream declares Python 3.9 or newer and includes Python 3.13 in its classifiers at this pin.
 
-The build installs upstream's `requirements.txt` from the same immutable commit. Those transitive dependencies are not independently locked to hashes in `0.1.0`; a future hardening release can add a generated lock file if stronger dependency-level reproducibility is required.
+Development after `0.1.0` also pins the complete Python runtime dependency graph in `requirements.lock`. The initial lock deliberately captures the exact versions installed by the successful `v0.1.0` CI build, avoiding a dependency upgrade during the reproducibility change. The Docker build installs that graph with `--no-deps`, builds Limnoria with `--no-build-isolation`, and runs `pip check` before accepting the image.
+
+The lock currently provides exact version pinning, not artifact hash pinning. Hash-verified package artifacts remain a separate supply-chain hardening step because hashes must cover the supported `linux/amd64` and `linux/arm64` artifacts rather than accidentally locking the image to one architecture.
 
 ## Build locally
 
@@ -198,7 +201,7 @@ docker build \
   -t limnoria:local .
 ```
 
-Changing `LIMNORIA_REF` may also require changing `LIMNORIA_SOURCE_DATE_EPOCH` so upstream's generated version remains deterministic.
+Changing `LIMNORIA_REF` may also require changing `LIMNORIA_SOURCE_DATE_EPOCH` and regenerating `requirements.lock` after reviewing upstream dependency changes.
 
 ## Validation
 
