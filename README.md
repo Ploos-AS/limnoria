@@ -2,7 +2,12 @@
 
 Production-oriented OCI packaging for [Limnoria](https://limnoria.net/), maintained by Ploos AS.
 
-Image: `ghcr.io/ploos-as/limnoria`
+Images:
+
+- GHCR: `ghcr.io/ploos-as/limnoria`
+- Docker Hub: `ploosas/limnoria`
+
+GHCR is the primary OCI registry. Docker Hub is a secondary distribution channel and follows the same release tag policy.
 
 ## Highlights
 
@@ -26,7 +31,7 @@ Image: `ghcr.io/ploos-as/limnoria`
 - `0.1` — release series
 - `latest` — most recent tagged release
 
-`latest` is intentionally not updated by normal `main` builds.
+`latest` is intentionally not updated by normal `main` builds. The same tag policy is used for GHCR and Docker Hub.
 
 ## Quick start with Docker Compose
 
