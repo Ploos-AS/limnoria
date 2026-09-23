@@ -25,7 +25,7 @@ grep -q 'qualify-published-image.sh' .github/workflows/container.yml
 grep -q 'irc-integration-test.sh' .github/workflows/container.yml
 grep -q 'linux/amd64' scripts/qualify-published-image.sh
 grep -q 'linux/arm64' scripts/qualify-published-image.sh
-grep -q '^REGISTERED$' tests/irc_stub.py
+grep -q 'print("REGISTERED"' tests/irc_stub.py
 grep -q 'JOINED #ci' tests/irc_stub.py
 grep -q 'PONG_OK' tests/irc_stub.py
 
