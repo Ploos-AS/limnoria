@@ -3,8 +3,18 @@ services:
     image: ghcr.io/ploos-as/limnoria:0.1.0
     container_name: limnoria
     restart: unless-stopped
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp:size=16m,mode=1777
     volumes:
       - ./data:/data
+    # Resource limits are examples; tune them for your bot and plugins.
+    mem_limit: 256m
+    cpus: 1.0
     # environment:
     #   LIMNORIA_CONFIG: MyBot.conf
     # ports:
