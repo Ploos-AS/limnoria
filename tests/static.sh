@@ -17,6 +17,12 @@ grep -q 'pip check' Dockerfile
 grep -q '^cryptography==50\.0\.1$' requirements.lock
 grep -q '^pyxmpp2-scram==2\.0\.2$' requirements.lock
 grep -q 'ghcr.io/ploos-as/limnoria:0.1.0' compose.yaml
+grep -q 'read_only: true' compose.yaml
+grep -q 'no-new-privileges:true' compose.yaml
+grep -q 'cap_drop:' compose.yaml
+grep -q 'ReadOnly=true' quadlet/limnoria.container
+grep -q 'DropCapability=all' quadlet/limnoria.container
+grep -q 'NoNewPrivileges=true' quadlet/limnoria.container
 grep -q 'Volume=%h/.local/share/limnoria:/data:Z' quadlet/limnoria.container
 grep -q '^0\.1\.0$' VERSION
 grep -q 'ghcr.io/ploos-as/limnoria:0.1.0' docs/releases/v0.1.0.md
