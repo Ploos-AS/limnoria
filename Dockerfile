@@ -21,7 +21,7 @@ RUN python -m venv "$VIRTUAL_ENV" \
     && pip check \
     && supybot --version
 
-FROM python:${PYTHON_VERSION}-alpine3.24
+FROM python:${PYTHON_VERSION}-alpine3.24@${PYTHON_IMAGE_DIGEST}
 
 ARG VERSION=0.1.0
 ARG LIMNORIA_REF=ac135083987a3a3121a9ba54f980902b29da10c7
