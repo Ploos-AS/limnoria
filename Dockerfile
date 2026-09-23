@@ -1,9 +1,7 @@
 # syntax=docker/dockerfile:1.7
 
 ARG PYTHON_VERSION=3.13
-ARG PYTHON_IMAGE_DIGEST=sha256:7d4a0a9d2309bc7c0c1fefb529abf43e27a2404a7f09ef42f5b1a75058d81c24
-
-FROM python:${PYTHON_VERSION}-slim-bookworm@${PYTHON_IMAGE_DIGEST} AS builder
+FROM python:${PYTHON_VERSION}-alpine3.24 AS builder
 
 ARG LIMNORIA_REF=ac135083987a3a3121a9ba54f980902b29da10c7
 ARG LIMNORIA_SOURCE_DATE_EPOCH=1788154024
@@ -23,7 +21,7 @@ RUN python -m venv "$VIRTUAL_ENV" \
     && pip check \
     && supybot --version
 
-FROM python:${PYTHON_VERSION}-slim-bookworm@${PYTHON_IMAGE_DIGEST}
+FROM python:${PYTHON_VERSION}-alpine3.24
 
 ARG VERSION=0.1.0
 ARG LIMNORIA_REF=ac135083987a3a3121a9ba54f980902b29da10c7
@@ -38,11 +36,9 @@ LABEL org.opencontainers.image.title="Limnoria" \
       org.opencontainers.image.revision="${LIMNORIA_REF}" \
       org.opencontainers.image.licenses="MIT AND BSD-3-Clause"
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends ca-certificates tini \
-    && rm -rf /var/lib/apt/lists/* \
-    && groupadd --gid 1000 limnoria \
-    && useradd --uid 1000 --gid 1000 --home-dir /data --create-home --shell /usr/sbin/nologin limnoria
+RUN apk add --no-cache ca-certificates tini \
+    && addgroup -g 1000 -S limnoria \
+    && adduser -u 1000 -S -D -h /data -s /sbin/nologin -G limnoria limnoria
 
 COPY --from=builder /opt/limnoria/venv /opt/limnoria/venv
 COPY rootfs/ /
