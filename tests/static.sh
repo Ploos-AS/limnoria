@@ -10,7 +10,61 @@ grep -q 'USER 1000:1000' Dockerfile
 grep -q 'VOLUME \["/data"\]' Dockerfile
 grep -q 'tini' Dockerfile
 grep -q '^ARG PYTHON_VERSION=3\.13\.15$' Dockerfile
-[ "$(grep -c '^FROM python:\${PYTHON_VERSION}-alpine3\.24' Dockerfile)" -eq 2 ] || {
+[ "$(grep -c '^FROM python:\${PYTHON_VERSION}-alpine3\.24@sha256:[0-9a-f]\{64\}
+  echo 'Dockerfile must use digest-pinned Python 3.13.15 on Alpine 3.24 for both stages' >&2
+  exit 1
+}
+grep -q 'apk add --no-cache ca-certificates tini' Dockerfile
+grep -Fq 'ENTRYPOINT ["/sbin/tini"' Dockerfile
+if grep -Eq 'apt-get|slim-bookworm|debian:' Dockerfile; then
+  echo 'Debian base/package management found; Alpine is the qualified OCI base' >&2
+  exit 1
+fi
+grep -q 'ac135083987a3a3121a9ba54f980902b29da10c7' Dockerfile
+grep -q 'COPY requirements.lock' Dockerfile
+grep -q 'pip install --no-deps -r /tmp/requirements.lock' Dockerfile
+grep -q 'pip install --no-deps --no-build-isolation' Dockerfile
+grep -q 'pip check' Dockerfile
+grep -q '^cryptography==50\.0\.1$' requirements.lock
+grep -q '^pyxmpp2-scram==2\.0\.2$' requirements.lock
+grep -q 'ghcr.io/ploos-as/limnoria:0.1.0' compose.yaml
+grep -q 'read_only: true' compose.yaml
+grep -q 'no-new-privileges:true' compose.yaml
+grep -q 'cap_drop:' compose.yaml
+grep -q 'ReadOnly=true' quadlet/limnoria.container
+grep -q 'DropCapability=all' quadlet/limnoria.container
+grep -q 'NoNewPrivileges=true' quadlet/limnoria.container
+grep -q 'Volume=%h/.local/share/limnoria:/data:Z' quadlet/limnoria.container
+grep -q '^0\.1\.0$' VERSION
+grep -q 'ghcr.io/ploos-as/limnoria:0.1.0' docs/releases/v0.1.0.md
+grep -q 'gh release create' .github/workflows/container.yml
+grep -q 'qualify-published-image.sh' .github/workflows/container.yml
+grep -q 'irc-integration-test.sh' .github/workflows/container.yml
+grep -q 'linux/amd64' scripts/qualify-published-image.sh
+grep -q 'linux/arm64' scripts/qualify-published-image.sh
+grep -q 'print("REGISTERED"' tests/irc_stub.py
+grep -q 'JOINED #ci' tests/irc_stub.py
+grep -q 'PONG_OK' tests/irc_stub.py
+
+# Every active requirement in the lock must be an exact package==version pin.
+# Ignore blank lines and full-line comments before validating requirements.
+if awk '
+  /^[[:space:]]*($|#)/ { next }
+  $0 !~ /^[A-Za-z0-9_.-]+==[^[:space:]]+$/ { bad = 1; print "invalid lock line: " $0 > "/dev/stderr" }
+  END { exit bad ? 1 : 0 }
+' requirements.lock; then
+  :
+else
+  echo 'requirements.lock contains a non-exact dependency' >&2
+  exit 1
+fi
+
+if command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
+  docker compose config >/dev/null
+fi
+
+echo 'static validation: PASS'
+ Dockerfile)" -eq 2 ] || {
   echo 'Dockerfile must use Python 3.13.15 on Alpine 3.24 for both stages' >&2
   exit 1
 }
