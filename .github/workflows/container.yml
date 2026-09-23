@@ -37,6 +37,8 @@ jobs:
         run: sh scripts/irc-integration-test.sh limnoria:test
 
   publish-edge-or-tag:
+    outputs:
+      digest: ${{ steps.ghcr-build.outputs.digest }}
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
     needs: test
     runs-on: ubuntu-latest
@@ -104,6 +106,7 @@ jobs:
           sbom: true
 
       - name: Build and publish multi-platform image
+        id: ghcr-build
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -130,7 +133,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Qualify published edge image
-        run: sh scripts/qualify-published-image.sh ghcr.io/ploos-as/limnoria:edge
+        run: sh scripts/qualify-published-image.sh ghcr.io/ploos-as/limnoria@${{ needs.publish-edge-or-tag.outputs.digest }}
 
 
   qualify-published-dockerhub-edge:
