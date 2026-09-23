@@ -9,7 +9,18 @@ done
 grep -q 'USER 1000:1000' Dockerfile
 grep -q 'VOLUME \["/data"\]' Dockerfile
 grep -q 'tini' Dockerfile
-grep -q '^ARG PYTHON_VERSION=3\.13\.15grep -q 'ac135083987a3a3121a9ba54f980902b29da10c7' Dockerfile
+grep -q '^ARG PYTHON_VERSION=3\.13\.15$' Dockerfile
+[ "$(grep -c '^FROM python:\${PYTHON_VERSION}-alpine3\.24' Dockerfile)" -eq 2 ] || {
+  echo 'Dockerfile must use Python 3.13.15 on Alpine 3.24 for both stages' >&2
+  exit 1
+}
+grep -q 'apk add --no-cache ca-certificates tini' Dockerfile
+grep -q 'ENTRYPOINT \["/sbin/tini"' Dockerfile
+if grep -Eq 'apt-get|slim-bookworm|debian:' Dockerfile; then
+  echo 'Debian base/package management found; Alpine is the qualified OCI base' >&2
+  exit 1
+fi
+grep -q 'ac135083987a3a3121a9ba54f980902b29da10c7' Dockerfile
 grep -q 'COPY requirements.lock' Dockerfile
 grep -q 'pip install --no-deps -r /tmp/requirements.lock' Dockerfile
 grep -q 'pip install --no-deps --no-build-isolation' Dockerfile
