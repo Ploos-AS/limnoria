@@ -1,8 +1,9 @@
 # syntax=docker/dockerfile:1.7
 
 ARG PYTHON_VERSION=3.13
+ARG PYTHON_IMAGE_DIGEST=sha256:7d4a0a9d2309bc7c0c1fefb529abf43e27a2404a7f09ef42f5b1a75058d81c24
 
-FROM python:${PYTHON_VERSION}-slim-bookworm AS builder
+FROM python:${PYTHON_VERSION}-slim-bookworm@${PYTHON_IMAGE_DIGEST} AS builder
 
 ARG LIMNORIA_REF=ac135083987a3a3121a9ba54f980902b29da10c7
 ARG LIMNORIA_SOURCE_DATE_EPOCH=1788154024
@@ -22,7 +23,7 @@ RUN python -m venv "$VIRTUAL_ENV" \
     && pip check \
     && supybot --version
 
-FROM python:${PYTHON_VERSION}-slim-bookworm
+FROM python:${PYTHON_VERSION}-slim-bookworm@${PYTHON_IMAGE_DIGEST}
 
 ARG VERSION=0.1.0
 ARG LIMNORIA_REF=ac135083987a3a3121a9ba54f980902b29da10c7
