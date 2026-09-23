@@ -59,5 +59,5 @@ USER 1000:1000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
     CMD ["/usr/local/bin/limnoria-healthcheck"]
 
-ENTRYPOINT ["/usr/bin/tini", "--", "/usr/local/bin/limnoria-entrypoint"]
+ENTRYPOINT ["/sbin/tini", "--", "/usr/local/bin/limnoria-entrypoint"]
 CMD ["run"]
