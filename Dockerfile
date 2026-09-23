@@ -21,6 +21,7 @@ RUN python -m venv "$VIRTUAL_ENV" \
     && pip check \
     && supybot --version
 
+ARG PYTHON_IMAGE
 FROM ${PYTHON_IMAGE}
 
 ARG VERSION=0.1.0
