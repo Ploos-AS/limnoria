@@ -11,6 +11,8 @@ cid=''
 cleanup() {
   [ -z "$cid" ] || docker rm -f "$cid" >/dev/null 2>&1 || true
   [ -z "$server_pid" ] || kill "$server_pid" >/dev/null 2>&1 || true
+  docker run --rm -v "$tmp:/cleanup" --entrypoint sh "$image" -c \
+    'find /cleanup -mindepth 1 -exec rm -rf {} +' >/dev/null 2>&1 || true
   rm -rf "$tmp"
 }
 trap cleanup EXIT INT TERM
