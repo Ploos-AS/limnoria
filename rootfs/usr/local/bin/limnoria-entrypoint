@@ -44,7 +44,7 @@ case "${1:-run}" in
       exec supybot "$config" "$@"
     else
       rc=$?
-      if [ "$rc" -eq 1 ] || [ "$rc" -eq 2 ]; then
+      if [ "$rc" -eq 1 ]; then
         idle_unconfigured
       fi
       exit "$rc"
