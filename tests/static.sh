@@ -15,7 +15,7 @@ grep -q '^ARG PYTHON_VERSION=3\.13\.15$' Dockerfile
   exit 1
 }
 grep -q 'apk add --no-cache ca-certificates tini' Dockerfile
-grep -q 'ENTRYPOINT \["/sbin/tini"' Dockerfile
+grep -q 'ENTRYPOINT ["/sbin/tini"' Dockerfile
 if grep -Eq 'apt-get|slim-bookworm|debian:' Dockerfile; then
   echo 'Debian base/package management found; Alpine is the qualified OCI base' >&2
   exit 1
