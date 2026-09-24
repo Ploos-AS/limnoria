@@ -13,7 +13,8 @@ cffi==2.1.1 \
     --hash=sha256:a2d7755bef5a12ed488f4ef1f1b69ee9191d7396083b755a5d2295f6edb4768b
 chardet==6.0.0.post1 \
     --hash=sha256:c894a36800549adf7bb5f2af47033281b75fdfcd2aa0f0243be0ad22a52e2dcb
-cryptography==50.0.1
+cryptography==50.0.1 \
+    --hash=sha256:9ebcdd5519be9b652a46f507817a74591774fc3d6923ac364e4dfa64e36b291b
 dateandtime==0.0.7
 ddate==0.1.2
 feedparser==6.0.14
