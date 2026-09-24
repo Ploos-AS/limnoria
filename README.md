@@ -187,7 +187,7 @@ ProgVal/Limnoria@ac135083987a3a3121a9ba54f980902b29da10c7
 
 That upstream commit is dated 2026-08-31. Python 3.13 is used by default; upstream declares Python 3.9 or newer and includes Python 3.13 in its classifiers at this pin.
 
-Development after `0.1.0` also pins the complete Python runtime dependency graph in `requirements.lock`. The initial lock deliberately captures the exact versions installed by the successful `v0.1.0` CI build, avoiding a dependency upgrade during the reproducibility change. The Docker build installs that graph with `--no-deps`, builds Limnoria with `--no-build-isolation`, and runs `pip check` before accepting the image.
+Development after `0.1.0` pins Python 3.13.15 on Alpine 3.24 and locks the official multi-platform Python/Alpine base image by OCI SHA-256 digest. CI rejects unpinned Python/Alpine base stages. It also pins the complete Python runtime dependency graph in `requirements.lock`. The initial lock deliberately captures the exact versions installed by the successful `v0.1.0` CI build, avoiding a dependency upgrade during the reproducibility change. The Docker build installs that graph with `--no-deps`, builds Limnoria with `--no-build-isolation`, and runs `pip check` before accepting the image.
 
 The lock currently provides exact version pinning, not artifact hash pinning. Hash-verified package artifacts remain a separate supply-chain hardening step because hashes must cover the supported `linux/amd64` and `linux/arm64` artifacts rather than accidentally locking the image to one architecture.
 
@@ -201,7 +201,7 @@ Override the Python version or upstream source pin when developing:
 
 ```sh
 docker build \
-  --build-arg PYTHON_VERSION=3.13 \
+  --build-arg PYTHON_VERSION=3.13.15 \
   --build-arg LIMNORIA_REF=ac135083987a3a3121a9ba54f980902b29da10c7 \
   -t limnoria:local .
 ```
