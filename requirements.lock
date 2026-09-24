@@ -5,9 +5,12 @@
 #
 # This file pins the complete runtime dependency graph to exact versions.
 # Install it with --no-deps so new transitive dependencies cannot enter the
-# image implicitly. Hash pinning is a separate hardening step.
+# image implicitly. Hash pinning is being introduced architecture-safely; cffi is
+# currently locked to its CPython 3.13 musllinux x86_64 and aarch64 artifacts.
 
-cffi==2.1.1
+cffi==2.1.1 \
+    --hash=sha256:e0bcb7e0f677f543555d2adff3bf19c05f66cdb4796e5ff602442ab2fe3c4ef7 \
+    --hash=sha256:a2d7755bef5a12ed488f4ef1f1b69ee9191d7396083b755a5d2295f6edb4768b
 chardet==6.0.0.post1
 cryptography==50.0.1
 dateandtime==0.0.7
