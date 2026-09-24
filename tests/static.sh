@@ -25,7 +25,159 @@ grep -q 'COPY requirements.lock' Dockerfile
 grep -q 'pip install --no-deps -r /tmp/requirements.lock' Dockerfile
 grep -q 'pip install --no-deps --no-build-isolation' Dockerfile
 grep -q 'pip check' Dockerfile
-grep -q '^cryptography==50\.0\.1$' requirements.lock
+grep -Eq '^cryptography==50\.0\.1([[:space:]]+\\)?
+grep -Eq '^pyxmpp2-scram==2\.0\.2([[:space:]]+\\)?
+grep -q 'ghcr.io/ploos-as/limnoria:0.1.0' compose.yaml
+grep -q 'read_only: true' compose.yaml
+grep -q 'no-new-privileges:true' compose.yaml
+grep -q 'cap_drop:' compose.yaml
+grep -q 'ReadOnly=true' quadlet/limnoria.container
+grep -q 'DropCapability=all' quadlet/limnoria.container
+grep -q 'NoNewPrivileges=true' quadlet/limnoria.container
+grep -q 'Volume=%h/.local/share/limnoria:/data:Z' quadlet/limnoria.container
+grep -q '^0\.1\.0$' VERSION
+grep -q 'ghcr.io/ploos-as/limnoria:0.1.0' docs/releases/v0.1.0.md
+grep -q 'gh release create' .github/workflows/container.yml
+grep -q 'qualify-published-image.sh' .github/workflows/container.yml
+grep -q '^  qualify-release-candidate:$' .github/workflows/container.yml
+grep -Fq 'digest: ${{ steps.release-build.outputs.digest }}' .github/workflows/container.yml
+grep -Fq 'ghcr.io/ploos-as/limnoria@${{ needs.publish-release-candidate.outputs.digest }}' .github/workflows/container.yml
+grep -q '^      - qualify-release-candidate$' .github/workflows/container.yml
+grep -q 'irc-integration-test.sh' .github/workflows/container.yml
+grep -q 'linux/amd64' scripts/qualify-published-image.sh
+grep -q 'linux/arm64' scripts/qualify-published-image.sh
+grep -q 'print("REGISTERED"' tests/irc_stub.py
+grep -q 'JOINED #ci' tests/irc_stub.py
+grep -q 'PONG_OK' tests/irc_stub.py
+
+# Third-party GitHub Actions must be pinned to immutable 40-character commit SHAs.
+if grep -E '^[[:space:]]*uses:[[:space:]]+[^[:space:]@]+@' .github/workflows/*.yml | grep -Ev '@[0-9a-f]{40}([[:space:]]+#.*)?$' >/dev/null; then
+  echo 'GitHub Actions must be pinned to immutable 40-character commit SHAs' >&2
+  exit 1
+fi
+
+# Every requirement starts with an exact package==version pin. Continuation lines
+# may only contain SHA-256 artifact hashes.
+if awk '
+  /^[[:space:]]*($|#)/ { next }
+  /^[A-Za-z0-9_.-]+==[^[:space:]\\]+[[:space:]]*\\?$/ { next }
+  /^[[:space:]]+--hash=sha256:[0-9a-f]{64}[[:space:]]*\\?$/ { next }
+  { bad = 1; print "invalid lock line: " $0 > "/dev/stderr" }
+  END { exit bad ? 1 : 0 }
+' requirements.lock; then
+  :
+else
+  echo 'requirements.lock contains a non-exact dependency or invalid hash line' >&2
+  exit 1
+fi
+
+if command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
+  docker compose config >/dev/null
+fi
+
+echo 'static validation: PASS'
+ requirements.lock
+grep -q '^pyxmpp2-scram==2\.0\.2$' requirements.lock
+grep -q 'ghcr.io/ploos-as/limnoria:0.1.0' compose.yaml
+grep -q 'read_only: true' compose.yaml
+grep -q 'no-new-privileges:true' compose.yaml
+grep -q 'cap_drop:' compose.yaml
+grep -q 'ReadOnly=true' quadlet/limnoria.container
+grep -q 'DropCapability=all' quadlet/limnoria.container
+grep -q 'NoNewPrivileges=true' quadlet/limnoria.container
+grep -q 'Volume=%h/.local/share/limnoria:/data:Z' quadlet/limnoria.container
+grep -q '^0\.1\.0$' VERSION
+grep -q 'ghcr.io/ploos-as/limnoria:0.1.0' docs/releases/v0.1.0.md
+grep -q 'gh release create' .github/workflows/container.yml
+grep -q 'qualify-published-image.sh' .github/workflows/container.yml
+grep -q '^  qualify-release-candidate:$' .github/workflows/container.yml
+grep -Fq 'digest: ${{ steps.release-build.outputs.digest }}' .github/workflows/container.yml
+grep -Fq 'ghcr.io/ploos-as/limnoria@${{ needs.publish-release-candidate.outputs.digest }}' .github/workflows/container.yml
+grep -q '^      - qualify-release-candidate$' .github/workflows/container.yml
+grep -q 'irc-integration-test.sh' .github/workflows/container.yml
+grep -q 'linux/amd64' scripts/qualify-published-image.sh
+grep -q 'linux/arm64' scripts/qualify-published-image.sh
+grep -q 'print("REGISTERED"' tests/irc_stub.py
+grep -q 'JOINED #ci' tests/irc_stub.py
+grep -q 'PONG_OK' tests/irc_stub.py
+
+# Third-party GitHub Actions must be pinned to immutable 40-character commit SHAs.
+if grep -E '^[[:space:]]*uses:[[:space:]]+[^[:space:]@]+@' .github/workflows/*.yml | grep -Ev '@[0-9a-f]{40}([[:space:]]+#.*)?$' >/dev/null; then
+  echo 'GitHub Actions must be pinned to immutable 40-character commit SHAs' >&2
+  exit 1
+fi
+
+# Every requirement starts with an exact package==version pin. Continuation lines
+# may only contain SHA-256 artifact hashes.
+if awk '
+  /^[[:space:]]*($|#)/ { next }
+  /^[A-Za-z0-9_.-]+==[^[:space:]\\]+[[:space:]]*\\?$/ { next }
+  /^[[:space:]]+--hash=sha256:[0-9a-f]{64}[[:space:]]*\\?$/ { next }
+  { bad = 1; print "invalid lock line: " $0 > "/dev/stderr" }
+  END { exit bad ? 1 : 0 }
+' requirements.lock; then
+  :
+else
+  echo 'requirements.lock contains a non-exact dependency or invalid hash line' >&2
+  exit 1
+fi
+
+if command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
+  docker compose config >/dev/null
+fi
+
+echo 'static validation: PASS'
+ requirements.lock
+grep -q 'ghcr.io/ploos-as/limnoria:0.1.0' compose.yaml
+grep -q 'read_only: true' compose.yaml
+grep -q 'no-new-privileges:true' compose.yaml
+grep -q 'cap_drop:' compose.yaml
+grep -q 'ReadOnly=true' quadlet/limnoria.container
+grep -q 'DropCapability=all' quadlet/limnoria.container
+grep -q 'NoNewPrivileges=true' quadlet/limnoria.container
+grep -q 'Volume=%h/.local/share/limnoria:/data:Z' quadlet/limnoria.container
+grep -q '^0\.1\.0$' VERSION
+grep -q 'ghcr.io/ploos-as/limnoria:0.1.0' docs/releases/v0.1.0.md
+grep -q 'gh release create' .github/workflows/container.yml
+grep -q 'qualify-published-image.sh' .github/workflows/container.yml
+grep -q '^  qualify-release-candidate:$' .github/workflows/container.yml
+grep -Fq 'digest: ${{ steps.release-build.outputs.digest }}' .github/workflows/container.yml
+grep -Fq 'ghcr.io/ploos-as/limnoria@${{ needs.publish-release-candidate.outputs.digest }}' .github/workflows/container.yml
+grep -q '^      - qualify-release-candidate$' .github/workflows/container.yml
+grep -q 'irc-integration-test.sh' .github/workflows/container.yml
+grep -q 'linux/amd64' scripts/qualify-published-image.sh
+grep -q 'linux/arm64' scripts/qualify-published-image.sh
+grep -q 'print("REGISTERED"' tests/irc_stub.py
+grep -q 'JOINED #ci' tests/irc_stub.py
+grep -q 'PONG_OK' tests/irc_stub.py
+
+# Third-party GitHub Actions must be pinned to immutable 40-character commit SHAs.
+if grep -E '^[[:space:]]*uses:[[:space:]]+[^[:space:]@]+@' .github/workflows/*.yml | grep -Ev '@[0-9a-f]{40}([[:space:]]+#.*)?$' >/dev/null; then
+  echo 'GitHub Actions must be pinned to immutable 40-character commit SHAs' >&2
+  exit 1
+fi
+
+# Every requirement starts with an exact package==version pin. Continuation lines
+# may only contain SHA-256 artifact hashes.
+if awk '
+  /^[[:space:]]*($|#)/ { next }
+  /^[A-Za-z0-9_.-]+==[^[:space:]\\]+[[:space:]]*\\?$/ { next }
+  /^[[:space:]]+--hash=sha256:[0-9a-f]{64}[[:space:]]*\\?$/ { next }
+  { bad = 1; print "invalid lock line: " $0 > "/dev/stderr" }
+  END { exit bad ? 1 : 0 }
+' requirements.lock; then
+  :
+else
+  echo 'requirements.lock contains a non-exact dependency or invalid hash line' >&2
+  exit 1
+fi
+
+if command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
+  docker compose config >/dev/null
+fi
+
+echo 'static validation: PASS'
+ requirements.lock
 grep -q '^pyxmpp2-scram==2\.0\.2$' requirements.lock
 grep -q 'ghcr.io/ploos-as/limnoria:0.1.0' compose.yaml
 grep -q 'read_only: true' compose.yaml
