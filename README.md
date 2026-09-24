@@ -22,6 +22,7 @@ GHCR is the primary OCI registry. Docker Hub is a secondary distribution channel
 - upstream source pinned to an immutable Git commit
 - runtime Python dependency graph pinned to exact versions in `requirements.lock`
 - GitHub Actions publishing with SBOM and provenance attestations
+- third-party GitHub Actions pinned to immutable commit SHAs and enforced by static CI validation
 - Compose and rootless Podman Quadlet examples
 
 ## Tags
