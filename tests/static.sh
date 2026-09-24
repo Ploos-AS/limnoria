@@ -39,6 +39,72 @@ grep -q '^0\.1\.0$' VERSION
 grep -q 'ghcr.io/ploos-as/limnoria:0.1.0' docs/releases/v0.1.0.md
 grep -q 'gh release create' .github/workflows/container.yml
 grep -q 'qualify-published-image.sh' .github/workflows/container.yml
+grep -q '^  qualify-release-candidate:grep -q 'irc-integration-test.sh' .github/workflows/container.yml
+grep -q 'linux/amd64' scripts/qualify-published-image.sh
+grep -q 'linux/arm64' scripts/qualify-published-image.sh
+grep -q 'print("REGISTERED"' tests/irc_stub.py
+grep -q 'JOINED #ci' tests/irc_stub.py
+grep -q 'PONG_OK' tests/irc_stub.py
+
+# Third-party GitHub Actions must be pinned to immutable 40-character commit SHAs.
+if grep -E '^[[:space:]]*uses:[[:space:]]+[^[:space:]@]+@' .github/workflows/*.yml | grep -Ev '@[0-9a-f]{40}([[:space:]]+#.*)?$' >/dev/null; then
+  echo 'GitHub Actions must be pinned to immutable 40-character commit SHAs' >&2
+  exit 1
+fi
+
+# Every active requirement in the lock must be an exact package==version pin.
+# Ignore blank lines and full-line comments before validating requirements.
+if awk '
+  /^[[:space:]]*($|#)/ { next }
+  $0 !~ /^[A-Za-z0-9_.-]+==[^[:space:]]+$/ { bad = 1; print "invalid lock line: " $0 > "/dev/stderr" }
+  END { exit bad ? 1 : 0 }
+' requirements.lock; then
+  :
+else
+  echo 'requirements.lock contains a non-exact dependency' >&2
+  exit 1
+fi
+
+if command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
+  docker compose config >/dev/null
+fi
+
+echo 'static validation: PASS'
+ .github/workflows/container.yml
+grep -Fq 'digest: ${{ steps.release-build.outputs.digest }}' .github/workflows/container.yml
+grep -Fq 'ghcr.io/ploos-as/limnoria@${{ needs.publish-release-candidate.outputs.digest }}' .github/workflows/container.yml
+grep -q '^      - qualify-release-candidategrep -q 'irc-integration-test.sh' .github/workflows/container.yml
+grep -q 'linux/amd64' scripts/qualify-published-image.sh
+grep -q 'linux/arm64' scripts/qualify-published-image.sh
+grep -q 'print("REGISTERED"' tests/irc_stub.py
+grep -q 'JOINED #ci' tests/irc_stub.py
+grep -q 'PONG_OK' tests/irc_stub.py
+
+# Third-party GitHub Actions must be pinned to immutable 40-character commit SHAs.
+if grep -E '^[[:space:]]*uses:[[:space:]]+[^[:space:]@]+@' .github/workflows/*.yml | grep -Ev '@[0-9a-f]{40}([[:space:]]+#.*)?$' >/dev/null; then
+  echo 'GitHub Actions must be pinned to immutable 40-character commit SHAs' >&2
+  exit 1
+fi
+
+# Every active requirement in the lock must be an exact package==version pin.
+# Ignore blank lines and full-line comments before validating requirements.
+if awk '
+  /^[[:space:]]*($|#)/ { next }
+  $0 !~ /^[A-Za-z0-9_.-]+==[^[:space:]]+$/ { bad = 1; print "invalid lock line: " $0 > "/dev/stderr" }
+  END { exit bad ? 1 : 0 }
+' requirements.lock; then
+  :
+else
+  echo 'requirements.lock contains a non-exact dependency' >&2
+  exit 1
+fi
+
+if command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
+  docker compose config >/dev/null
+fi
+
+echo 'static validation: PASS'
+ .github/workflows/container.yml
 grep -q 'irc-integration-test.sh' .github/workflows/container.yml
 grep -q 'linux/amd64' scripts/qualify-published-image.sh
 grep -q 'linux/arm64' scripts/qualify-published-image.sh
