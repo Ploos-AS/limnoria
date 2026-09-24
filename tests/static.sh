@@ -39,7 +39,11 @@ grep -q '^0\.1\.0$' VERSION
 grep -q 'ghcr.io/ploos-as/limnoria:0.1.0' docs/releases/v0.1.0.md
 grep -q 'gh release create' .github/workflows/container.yml
 grep -q 'qualify-published-image.sh' .github/workflows/container.yml
-grep -q '^  qualify-release-candidate:grep -q 'irc-integration-test.sh' .github/workflows/container.yml
+grep -q '^  qualify-release-candidate:$' .github/workflows/container.yml
+grep -Fq 'digest: ${{ steps.release-build.outputs.digest }}' .github/workflows/container.yml
+grep -Fq 'ghcr.io/ploos-as/limnoria@${{ needs.publish-release-candidate.outputs.digest }}' .github/workflows/container.yml
+grep -q '^      - qualify-release-candidate$' .github/workflows/container.yml
+grep -q 'irc-integration-test.sh' .github/workflows/container.yml
 grep -q 'linux/amd64' scripts/qualify-published-image.sh
 grep -q 'linux/arm64' scripts/qualify-published-image.sh
 grep -q 'print("REGISTERED"' tests/irc_stub.py
