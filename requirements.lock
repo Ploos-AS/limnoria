@@ -15,7 +15,8 @@ chardet==6.0.0.post1 \
     --hash=sha256:c894a36800549adf7bb5f2af47033281b75fdfcd2aa0f0243be0ad22a52e2dcb
 cryptography==50.0.1 \
     --hash=sha256:9ebcdd5519be9b652a46f507817a74591774fc3d6923ac364e4dfa64e36b291b
-dateandtime==0.0.7
+dateandtime==0.0.7 \
+    --hash=sha256:9342c600c82f473cc25aa6f08d3742128d53d753a75379735fa7280ff660c139
 ddate==0.1.2
 feedparser==6.0.14
 feedparser-sgmllib==2.1.0
