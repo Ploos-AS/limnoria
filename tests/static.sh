@@ -10,7 +10,7 @@ grep -q 'USER 1000:1000' Dockerfile
 grep -q 'VOLUME \["/data"\]' Dockerfile
 grep -q 'tini' Dockerfile
 grep -q '^ARG PYTHON_VERSION=3\.13\.15$' Dockerfile
-[ "$(grep -Ec '^FROM python:\${PYTHON_VERSION}-alpine3\.24@sha256:[0-9a-f]{64}$' Dockerfile)" -eq 2 ] || {
+[ "$(grep -Ec '^FROM python:\${PYTHON_VERSION}-alpine3\.24@sha256:[0-9a-f]{64}( AS builder)?$' Dockerfile)" -eq 2 ] || {
   echo 'Dockerfile must use digest-pinned Python 3.13.15 on Alpine 3.24 for both stages' >&2
   exit 1
 }
