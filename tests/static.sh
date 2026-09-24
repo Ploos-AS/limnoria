@@ -25,8 +25,8 @@ grep -q 'COPY requirements.lock' Dockerfile
 grep -q 'pip install --no-deps -r /tmp/requirements.lock' Dockerfile
 grep -q 'pip install --no-deps --no-build-isolation' Dockerfile
 grep -q 'pip check' Dockerfile
-grep -Eq '^cryptography==50\.0\.1([[:space:]]+\\)?
-grep -Eq '^pyxmpp2-scram==2\.0\.2([[:space:]]+\\)?
+grep -Fq 'cryptography==50.0.1' requirements.lock
+grep -Fq 'pyxmpp2-scram==2.0.2' requirements.lock
 grep -q 'ghcr.io/ploos-as/limnoria:0.1.0' compose.yaml
 grep -q 'read_only: true' compose.yaml
 grep -q 'no-new-privileges:true' compose.yaml
