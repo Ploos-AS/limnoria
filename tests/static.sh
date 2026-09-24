@@ -47,7 +47,11 @@ grep -q 'JOINED #ci' tests/irc_stub.py
 grep -q 'PONG_OK' tests/irc_stub.py
 
 # Third-party GitHub Actions must be pinned to immutable 40-character commit SHAs.
-if grep -E '^[[:space:]]*uses:[[:space:]]+[^[:space:]@]+@' .github/workflows/*.yml | grep -Ev '@[0-9a-f]{40}([[:space:]]+#.*)?
+if grep -E '^[[:space:]]*uses:[[:space:]]+[^[:space:]@]+@' .github/workflows/*.yml | grep -Ev '@[0-9a-f]{40}([[:space:]]+#.*)?$' >/dev/null; then
+  echo 'GitHub Actions must be pinned to immutable 40-character commit SHAs' >&2
+  exit 1
+fi
+
 # Every active requirement in the lock must be an exact package==version pin.
 # Ignore blank lines and full-line comments before validating requirements.
 if awk '
