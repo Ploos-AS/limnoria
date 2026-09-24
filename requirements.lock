@@ -21,7 +21,8 @@ ddate==0.1.2 \
     --hash=sha256:6e910158037826457214eba7578de940298b0232c2695ddb44f64a7529c76618
 feedparser==6.0.14 \
     --hash=sha256:e35e3f760151b0c3b22cac9684155cae186a233e16c49bcbc6c49e91e3131137
-feedparser-sgmllib==2.1.0
+feedparser-sgmllib==2.1.0 \
+    --hash=sha256:2cab2d43b95a954f920f18aebce7a4dbbb3f539780b127e2aa114f579821e01d
 pycparser==3.0
 PySocks==1.7.1
 python-dateutil==2.9.0.post0
