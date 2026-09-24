@@ -56,16 +56,18 @@ if grep -E '^[[:space:]]*uses:[[:space:]]+[^[:space:]@]+@' .github/workflows/*.y
   exit 1
 fi
 
-# Every active requirement in the lock must be an exact package==version pin.
-# Ignore blank lines and full-line comments before validating requirements.
+# Every requirement starts with an exact package==version pin. Continuation lines
+# may only contain SHA-256 artifact hashes.
 if awk '
   /^[[:space:]]*($|#)/ { next }
-  $0 !~ /^[A-Za-z0-9_.-]+==[^[:space:]]+$/ { bad = 1; print "invalid lock line: " $0 > "/dev/stderr" }
+  /^[A-Za-z0-9_.-]+==[^[:space:]\\]+[[:space:]]*\\?$/ { next }
+  /^[[:space:]]+--hash=sha256:[0-9a-f]{64}[[:space:]]*\\?$/ { next }
+  { bad = 1; print "invalid lock line: " $0 > "/dev/stderr" }
   END { exit bad ? 1 : 0 }
 ' requirements.lock; then
   :
 else
-  echo 'requirements.lock contains a non-exact dependency' >&2
+  echo 'requirements.lock contains a non-exact dependency or invalid hash line' >&2
   exit 1
 fi
 
