@@ -224,7 +224,7 @@ docker build -t limnoria:test .
 sh scripts/smoke-test.sh limnoria:test
 ```
 
-CI performs the same baseline checks before publishing and builds a multi-platform OCI image for `linux/amd64` and `linux/arm64`.
+CI performs the same baseline checks before publishing and builds a multi-platform OCI image for `linux/amd64` and `linux/arm64`. Main/edge images are qualified by their exact published digest in both GHCR and Docker Hub. Release-candidate images are likewise qualified by exact GHCR digest before CI is allowed to create the immutable Git tag and GitHub Release.
 
 ## Security model
 
