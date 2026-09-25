@@ -22,7 +22,7 @@ if grep -Eq 'apt-get|slim-bookworm|debian:' Dockerfile; then
 fi
 grep -q 'ac135083987a3a3121a9ba54f980902b29da10c7' Dockerfile
 grep -q 'COPY requirements.lock' Dockerfile
-grep -q 'pip install --no-deps -r /tmp/requirements.lock' Dockerfile
+grep -q 'pip install --require-hashes --no-deps -r /tmp/requirements.lock' Dockerfile
 grep -q 'pip install --no-deps --no-build-isolation' Dockerfile
 grep -q 'pip check' Dockerfile
 grep -Fq 'cryptography==50.0.1' requirements.lock
