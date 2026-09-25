@@ -1,0 +1,6 @@
+# Build-tool lock for the Limnoria container.
+# Hashes will be populated and qualified for the supported multi-platform build.
+pip==26.2.1
+setuptools==84.0.0
+wheel==0.48.0
+packaging==26.3
