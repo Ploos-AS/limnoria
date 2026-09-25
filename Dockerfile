@@ -11,10 +11,11 @@ ENV VIRTUAL_ENV=/opt/limnoria/venv \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
     PIP_NO_CACHE_DIR=1
 
+COPY build-requirements.lock /tmp/build-requirements.lock
 COPY requirements.lock /tmp/requirements.lock
 
 RUN python -m venv "$VIRTUAL_ENV" \
-    && pip install --upgrade 'pip==26.2.1' 'setuptools==84.0.0' 'wheel==0.48.0' 'packaging==26.3' \
+    && pip install --require-hashes --no-deps -r /tmp/build-requirements.lock \
     && pip install --require-hashes --no-deps -r /tmp/requirements.lock \
     && SOURCE_DATE_EPOCH="${LIMNORIA_SOURCE_DATE_EPOCH}" \
        pip install --no-deps --no-build-isolation "https://github.com/ProgVal/Limnoria/archive/${LIMNORIA_REF}.tar.gz" \
